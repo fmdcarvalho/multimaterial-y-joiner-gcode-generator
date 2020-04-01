@@ -44,6 +44,9 @@ new Vue({
         extruderRelativePositioningGcode: function () {
             return 'M83 ; extruder relative positioning\n';
         },
+        extruderAbsolutePositioningGcode: function () {
+            return 'M83 ; extruder relative positioning\n';
+        },
         relativePositioningGcode: function () {
             return 'G91 ; relative positioning\n';
         },
@@ -64,6 +67,7 @@ new Vue({
         },
         moveFastOnCenterOfWasteBlockGcode: function () {
             return this.absolutePositioningGcode() +
+                this.extruderAbsolutePositioningGcode() + 
                 this.moveFastGcode('X' + this.format(this.wasteBlockCenterX) + ' Y' + this.format(this.wasteBlockCenterY), 'move ON the waste block');
         },
         loadFilamentFromParkingPositionGcode: function (movement, extraDistance) {
@@ -75,6 +79,7 @@ new Vue({
                 this.moveGcode('E' + this.format(this.filamentParkingPosition - this.retractionBackup), this.max(1000, this.maxExtruderFeedrate), 'restore - ' + this.retractionBackup + 'mm') +
                 this.moveGcode('E' + this.format(this.retractionBackup + extraDistance) + movement, 500, 'restore the rest (' + this.retractionBackup + ' mm)' + (extraDistance > 0 ? ' + ' + extraDistance + 'mm' : '')) +
                 this.absolutePositioningGcode() +
+                this.extruderAbsolutePositioningGcode() + 
                 ';↑↑↑ Load from parking position ↑↑↑\n\n';
         },
         saveFilamentToParkingPositionGcode: function (ignoreZ) {
@@ -95,6 +100,7 @@ new Vue({
                 this.moveGcode('X-20 E-' + coolingLength, 1000) +
                 this.moveGcode('E-' + this.format(this.filamentParkingPosition - this.filamentCoolingPosition), feedrate, 'parking filament') +
                 this.absolutePositioningGcode() +
+                this.extruderAbsolutePositioningGcode() + 
                 ';↑↑↑ Cooling filament and saving filament to parking position ↑↑↑\n';
         },
         extrudeLineRightGcode: function () {
@@ -172,6 +178,7 @@ new Vue({
                 this.saveFilamentToParkingPositionGcode() +
                 this.zeroExtruderLengthGcode() +
                 this.absolutePositioningGcode() +
+                this.extruderAbsolutePositioningGcode() + 
                 this.goOnZeroXYGcode() +
                 '\n' +
                 ';↓↓↓ YOUR CODE ↓↓↓\n' +
@@ -217,6 +224,7 @@ new Vue({
                 this.saveFilamentToParkingPositionGcode() +
                 this.zeroExtruderLengthGcode() +
                 this.absolutePositioningGcode() +
+                this.extruderAbsolutePositioningGcode() + 
                 '\n' +
                 ';↓↓↓ YOUR CODE ↓↓↓\n' +
                 ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;';
