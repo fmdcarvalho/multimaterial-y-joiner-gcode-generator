@@ -45,7 +45,7 @@ new Vue({
             return 'M83 ; extruder relative positioning\n';
         },
         extruderAbsolutePositioningGcode: function () {
-            return 'M83 ; extruder relative positioning\n';
+            return 'M82 ; extruder absolute positioning\n';
         },
         relativePositioningGcode: function () {
             return 'G91 ; relative positioning\n';
