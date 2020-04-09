@@ -1,7 +1,7 @@
 new Vue({
     el: '#app',
     data: {
-        maxExtruderFeedrate: 20,
+        maxExtruderFeedrate: 45,
         wasteBlockX: 50,
         wasteBlockY: 150,
         wasteBlockSize: 40,
@@ -28,7 +28,7 @@ new Vue({
             return +this.wasteBlockY + this.wasteBlockHalfSize;
         },
         halfFeedrate: function () {
-            return this.max(1000, this.maxExtruderFeedrate / 2);
+            return this.max(1000, this.maxExtruderFeedrate*60 / 2);
         }
     },
     methods: {
@@ -77,7 +77,7 @@ new Vue({
             return '\n;↓↓↓ Load from parking position ↓↓↓\n' +
                 this.relativePositioningGcode() +
                 this.extruderRelativePositioningGcode() + 
-                this.moveGcode('E' + this.format(this.filamentParkingPosition - this.retractionBackup), this.max(1000, this.maxExtruderFeedrate), 'restore - ' + this.retractionBackup + 'mm') +
+                this.moveGcode('E' + this.format(this.filamentParkingPosition - this.retractionBackup), this.max(1000, this.maxExtruderFeedrate*60), 'restore - ' + this.retractionBackup + 'mm') +
                 this.moveGcode('E' + this.format(this.retractionBackup + extraDistance) + movement, 500, 'restore the rest (' + this.retractionBackup + ' mm)' + (extraDistance > 0 ? ' + ' + extraDistance + 'mm' : '')) +
                 this.absolutePositioningGcode() +
                 this.extruderAbsolutePositioningGcode() + 
