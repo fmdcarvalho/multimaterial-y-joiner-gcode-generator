@@ -1,7 +1,7 @@
 new Vue({
     el: '#app',
     data: {
-        maxExtruderFeedrate: 5000,
+        maxExtruderFeedrate: 20,
         wasteBlockX: 50,
         wasteBlockY: 150,
         wasteBlockSize: 40,
@@ -76,6 +76,7 @@ new Vue({
 
             return '\n;↓↓↓ Load from parking position ↓↓↓\n' +
                 this.relativePositioningGcode() +
+                this.extruderRelativePositioningGcode() + 
                 this.moveGcode('E' + this.format(this.filamentParkingPosition - this.retractionBackup), this.max(1000, this.maxExtruderFeedrate), 'restore - ' + this.retractionBackup + 'mm') +
                 this.moveGcode('E' + this.format(this.retractionBackup + extraDistance) + movement, 500, 'restore the rest (' + this.retractionBackup + ' mm)' + (extraDistance > 0 ? ' + ' + extraDistance + 'mm' : '')) +
                 this.absolutePositioningGcode() +
@@ -84,10 +85,11 @@ new Vue({
         },
         saveFilamentToParkingPositionGcode: function (ignoreZ) {
             let coolingLength = this.format(this.coolingLength / 2);
-            let feedrate = this.max(1000, this.maxExtruderFeedrate);
+            let feedrate = this.max(1000, this.maxExtruderFeedrate*60);
 
             return '\n;↓↓↓ Cooling filament and saving filament to parking position ↓↓↓\n' +
                 this.relativePositioningGcode() +
+                this.extruderRelativePositioningGcode() + 
                 this.moveGcode('E-' + this.format(this.retractionSize), feedrate, 'stage 1 of 3 stage retraction') +
                 (ignoreZ === true ? '' : this.moveFastGcode('Z+2')) +
                 this.moveGcode('E' + this.format(this.retractionSize - this.retractionBackup), feedrate / 2, 'stage 2 of 3 stage retraction, this keeps from producing "hair"') +
@@ -203,6 +205,7 @@ new Vue({
                 '\n' +
                 this.moveFastOnCenterOfWasteBlockGcode() +
                 startPosition +
+                this.extruderRelativePositioningGcode() +
                 this.relativePositioningGcode() +
                 this.moveGcode('Z-2', 3600, 'touch the waste block') +
                 this.loadFilamentFromParkingPositionGcode(movement, this.loadFromBackupExtraDistance) +
@@ -216,6 +219,7 @@ new Vue({
                 this.moveGcode('E-' + this.format(this.retractionBackup) + ' X-1 Y-1', this.halfFeedrate, 'release some presure and move') +
                 this.moveGcode('Z+2 E-' + this.format(this.retractionSize - this.retractionBackup), this.halfFeedrate, 'release even more presure') +
                 this.moveFastOnCenterOfWasteBlockGcode() +
+                this.extruderRelativePositioningGcode() +
                 this.relativePositioningGcode() +
                 this.moveGcode('Z-2 X+10 E' + this.format(this.retractionSize), this.halfFeedrate, 'restore filament') +
                 this.moveGcode('Y+2', this.halfFeedrate) +
